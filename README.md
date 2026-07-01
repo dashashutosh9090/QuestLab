@@ -129,28 +129,49 @@
 
 ## 🛰️ Architecture
 
-```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                          QUESTLAB  ·  SYSTEM MAP                           │
-└──────────────────────────────────────────────────────────────────────────┘
+> 🛸 A real-time MERN pipeline: the React client talks to the Express gateway over **REST + Socket.IO**, which orchestrates the database, AI, and third-party services.
 
-        ┌────────────────────────┐            ┌───────────────────────────┐
-        │      CLIENT (Vite)     │   REST +   │      SERVER (Express 5)    │
-        │  React 19 · Tailwind 4 │  Socket.IO │  Node · Mongoose · JWT     │
-        │  Framer · Monaco Editor│◀──────────▶│  Helmet · Rate-limit · CORS│
-        └───────────┬────────────┘            └───────────┬───────────────┘
-                    │                                      │
-      ┌─────────────┼──────────────┐        ┌──────────────┼──────────────┐
-      ▼             ▼              ▼         ▼              ▼              ▼
- ┌─────────┐  ┌──────────┐  ┌──────────┐ ┌────────┐  ┌──────────┐  ┌──────────┐
- │Dashboard│  │Study Rooms│ │Leaderboard│ │MongoDB │  │  Gemini  │  │Cloudinary│
- │ /Roadmap│  │  + DMs    │ │/Mentorship│ │ Atlas  │  │  AI Gen  │  │  Uploads │
- └─────────┘  └──────────┘  └──────────┘ └────────┘  └──────────┘  └──────────┘
-                                              │              │
-                                         ┌────┴────┐    ┌────┴─────┐
-                                         │ JDoodle │    │Nodemailer│
-                                         │  Exec   │    │  Emails  │
-                                         └─────────┘    └──────────┘
+```mermaid
+flowchart TB
+    subgraph CLIENT["🖥️ &nbsp;CLIENT · Vite SPA"]
+        UI["React 19 · Tailwind 4<br/>Framer Motion · Monaco Editor"]
+        FEAT["Dashboard · Roadmap · Leaderboard<br/>Study Rooms · DMs · Mentorship · Admin"]
+    end
+
+    subgraph SERVER["🛰️ &nbsp;SERVER · Express 5 Gateway"]
+        API["REST API + Socket.IO<br/>JWT · Helmet · Rate-limit · CORS"]
+        LOGIC["Gamification Engine<br/>XP · Tiers · Badges · Notifications"]
+    end
+
+    subgraph DATA["🗄️ &nbsp;DATA & EXTERNAL SERVICES"]
+        DB[("MongoDB Atlas")]
+        AI["🤖 Google Gemini<br/>AI Quest Gen"]
+        EXEC["⚡ JDoodle<br/>Code Execution"]
+        CLOUD["☁️ Cloudinary<br/>Uploads"]
+        MAIL["📧 Nodemailer<br/>Emails"]
+    end
+
+    UI --> FEAT
+    FEAT <-->|"REST + WebSocket"| API
+    API --> LOGIC
+    LOGIC --> DB
+    LOGIC --> AI
+    LOGIC --> EXEC
+    LOGIC --> CLOUD
+    LOGIC --> MAIL
+
+    classDef client fill:#0b1120,stroke:#06b6d4,stroke-width:2px,color:#a5f3fc;
+    classDef server fill:#0b1120,stroke:#8b5cf6,stroke-width:2px,color:#ddd6fe;
+    classDef data fill:#0b1120,stroke:#10b981,stroke-width:2px,color:#a7f3d0;
+    classDef store fill:#111827,stroke:#f59e0b,stroke-width:2px,color:#fde68a;
+
+    class UI,FEAT client;
+    class API,LOGIC server;
+    class AI,EXEC,CLOUD,MAIL data;
+    class DB store;
+    style CLIENT fill:#020617,stroke:#06b6d4,stroke-width:1px,color:#67e8f9;
+    style SERVER fill:#020617,stroke:#8b5cf6,stroke-width:1px,color:#c4b5fd;
+    style DATA fill:#020617,stroke:#10b981,stroke-width:1px,color:#6ee7b7;
 ```
 
 **Project layout**
